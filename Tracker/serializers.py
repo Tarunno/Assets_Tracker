@@ -4,7 +4,7 @@ from Tracker.models import *
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
     class Meta:
-        model = CustomUser
+        model = User
         fields = ["username", "password", "password2", "is_company"]
 
     def validate(self, attrs):
@@ -12,11 +12,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         password2 = attrs.get('password2')
         if password != password2:
-            raise serializers.ValidationError("Passwords doesn't match!")
+            raise serializers.ValidationError("Passwords doesn't match")
         return attrs
     
     def create(self, validated_data):
-        return CustomUser.objects.create(
+        return User.objects.create(
             username=validated_data['username'], 
             password=validated_data['password'],
             is_company=validated_data['is_company']
@@ -24,5 +24,5 @@ class RegistrationSerializer(serializers.ModelSerializer):
     
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
+        model = User
         fields = ['username', 'password', 'is_company']

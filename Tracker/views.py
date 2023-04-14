@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-import json
+from django.contrib.auth import authenticate
 
 from Tracker.serializers import *
 from Tracker.models import *
@@ -24,7 +24,7 @@ def Signup(request):
           user = serializer.save()
           if serializer.data['is_company']:
               Company.objects.create(user=user, name=serializer.data['username'])
-          return Response(serializer.data)
+          return Response({'msg': 'Registration successful'})
         else: return Response(serializer.errors)
         
 
@@ -32,11 +32,16 @@ def Signup(request):
 def Login(request):
     if request.method == 'POST':
         serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
+        print('===========================')
+        if serializer.is_valid():
+            print("++++++++++++++++++++++++++++")
             username = serializer.data['username']
             password = serializer.data['password']
             is_company = serializer.data['is_company']
-
-        return Response({'msg': 'Login'})
+            user = authenticate(username=username, password=password, is_company=is_company)
+            if user is not None:  
+                return Response({'msg': 'Login successful'})
+            else: return Response({'msg': 'Invalid user or company'})
+                
 
 
