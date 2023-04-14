@@ -5,4 +5,5 @@ urlpatterns = [
     path('', ApiOverView, name='api-overview'),
     path('signup/', Signup, name='signup'),
     path('login/', Login, name='login'),
+    path('employees/', Employees, name='employees'),
 ]

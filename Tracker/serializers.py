@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from Tracker.models import *
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -8,7 +9,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ["username", "password", "password2", "is_company"]
 
     def validate(self, attrs):
-        name = attrs.get('name')
         password = attrs.get('password')
         password2 = attrs.get('password2')
         if password != password2:
@@ -18,11 +18,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create(
             username=validated_data['username'], 
-            password=validated_data['password'],
+            password=make_password(validated_data['password']),
             is_company=validated_data['is_company']
         )
     
-class LoginSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=100)
+    password = serializers.CharField(max_length=100)
+    is_company = serializers.BooleanField(default=True)
+
     class Meta:
         model = User
         fields = ['username', 'password', 'is_company']
