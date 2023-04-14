@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
 
 
 class Company(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -14,6 +15,7 @@ class Company(models.Model):
     
 
 class Employee(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=False)
     name = models.CharField(max_length=100)
 
