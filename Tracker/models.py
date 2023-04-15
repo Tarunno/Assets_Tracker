@@ -79,3 +79,21 @@ class Device(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Thread(models.Model):
+    # Thread will track the assignment and return of devices from a company to a employee
+
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    condition = models.CharField(max_length=250)
+    assigned = models.BooleanField(default=True)
+    returned = models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.assigned == True and self.returned != True:
+            return self.employee.company.name + ' assigned ' + self.device.name + ' to ' + self.employee.name + ' at ' + str(self.created_at)
+        elif self.assigned == True and self.returned == True:
+            return self.employee.name + ' returned ' + self.device.name + ' to ' + self.employee.company.name + ' at ' + str(self.created_at)
+    

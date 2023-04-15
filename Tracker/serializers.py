@@ -30,3 +30,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password', 'is_company']
+
+class ThreadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Thread 
+        fields = ['employee', 'device', 'condition']
