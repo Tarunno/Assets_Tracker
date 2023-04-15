@@ -127,19 +127,19 @@ def Assign(request):
             request.data['employee'] = employee.id
             request.data['device'] = device.id
 
+            thread = None
             try:
-                thread = Thread.objects.get(employee=employee)
+                thread = Thread.objects.get(employee=employee, device=device)
+                if thread.returned == False:
+                    return Response({'msg': thread.device.name + ' is currently assigned to ' + thread.employee.name})
+                thread.returned = False
+                thread.save()
             except:
                 thread = None
-            if thread is not None and thread.returned == False:
-                return Response({'msg': thread.device.name + ' is currently assigned to ' + thread.employee.name})
-            
+                serializer = ThreadSerializer(data=request.data)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
 
-            
-            serializer = ThreadSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                
             return Response({
                 'msg': company.name + ' assigned ' + device.name + ' to ' + employee.name
             })
@@ -156,12 +156,12 @@ def Return(request, device_name):
     thread = Thread.objects.get(device=device)
 
     if thread is not None:
-        thread.returned = True
-        thread.save()
         if thread.returned == False:
+            thread.returned = True
+            thread.save()
             return Response({'msg': device.name + ' returned successfully'})
         else:
-            return Response({'msg': device.name + " deosn't belogn to you"})
+           return Response({'msg': device.name + " deosn't belogn to you"})
             
     return Response({'msg': device.name + " deosn't belogn to you"})
 
